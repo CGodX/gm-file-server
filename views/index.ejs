@@ -13,10 +13,12 @@
         <%= title %>
     </p>
 
-    <form action="/file/upload" method="post" enctype="multipart/form-data">
+    <form action="/file/upload" method="post" target="ifm" enctype="multipart/form-data">
         <input type="file" name="file">
         <button type="submit">提交文件</button>
     </form>
+
+    <iframe name="ifm" id="ifm" width="100%"></iframe>
 </body>
 
 </html>

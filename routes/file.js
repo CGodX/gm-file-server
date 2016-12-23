@@ -1,8 +1,36 @@
-var express = require('express');
-var router = express.Router();
-var multiparty = require('multiparty');
+const express     = require('express');
+const multiparty  = require('multiparty');
+const fs          = require('fs');
+const path        = require('path');
+const router      = express.Router();
 
-var filePath = './public/files/';
+const filePath = './public/gm-file-server';
+
+/***
+ * 生成文件夹
+ */
+function mkdirsSync(dirpath, mode) {
+    if (!fs.existsSync(dirpath)) {
+        var pathtmp;
+        dirpath.split(path.sep).forEach(function(dirname) {
+            if (pathtmp) {
+                pathtmp = path.join(pathtmp, dirname);
+            }
+            else {
+                pathtmp = dirname;
+            }
+            if (!pathtmp) return;
+            if (!fs.existsSync(pathtmp)) {
+                if (!fs.mkdirSync(pathtmp, mode)) {
+                    return false;
+                }
+            }
+        });
+    }
+    return true;
+}
+
+mkdirsSync(filePath);
 
 router.get('/valid_md5', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -19,7 +47,7 @@ router.post('/upload', function(req, res, next) {
         if(err){
             res.json({
                 success: false,
-                message: '上传文件失败'
+                message: err
             });
             return;
         }
