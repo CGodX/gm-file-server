@@ -8,17 +8,59 @@
 </head>
 
 <body>
-    <h1><%= title %></h1>
-    <p>Welcome to
-        <%= title %>
-    </p>
 
     <form action="/file/upload" method="post" target="ifm" enctype="multipart/form-data">
         <input type="file" name="file">
         <button type="submit">提交文件</button>
     </form>
 
+    <button webuploader>webuploader</button>
+
     <iframe name="ifm" id="ifm" width="100%"></iframe>
+    <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="//cdn.staticfile.org/webuploader/0.1.5/webuploader.min.js" charset="utf-8"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.2.32/angular.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            var app = angular.module('app', []);
+
+            app.directive('webuploader', function(){
+                return {
+                    restrict: 'A',
+                    link: function(scope, element, attrs){
+                        var uploader = WebUploader.create({
+                            auto: true,
+                            // 文件接收服务端。
+                            server: 'http://127.0.0.1:3000/file/upload',
+                            // 选择文件的按钮。可选。
+                            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                            pick: element,
+                            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+                            resize: false
+                        });
+                        uploader.on( 'fileQueued', function( file ) {
+                            uploader.md5File( file )
+
+                                // 及时显示进度
+                                .progress(function(percentage) {
+                                    console.log('Percentage:', percentage);
+                                })
+
+                                // 完成
+                                .then(function(val) {
+                                    console.log('md5 result:', val);
+                                });
+
+                        });
+                    }
+                };
+            });
+
+            console.log(app);
+
+            angular.bootstrap(document, ['app']);
+        })();
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .webuploader-element-invisible{
+            position: absolute !important;
+            clip: rect(1px 1px 1px 1px);
+            clip: rect(1px,1px,1px,1px);
+        }
+        .img_item{
+            height: 100px;
+            width: 100px;
+            overflow: hidden;
+        }
+        [ngf-background]{
+            vertical-align: middle;
+            height: 100px;
+            width: 100px;
+            background-size: cover;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div ng-controller="upload">
+        <div class="btn btn-info" ngf-select ng-model="up_file" ngf-multiple="true">
+            选择文件
+        </div>
+        <div class="btn btn-success" ng-click="upload()">Upload</div>
+        <div>
+            <div ng-repeat="file in up_file">{{ file.progress }}</div>
+        </div>
+    </div>
+    <img src="http://127.0.0.1:3000/file/load/8jTWyHbZTSgfrTrseFF87RLk.gif" alt="">
+    <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.4.4/angular.min.js"></script>
+    <script src="//cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/FileAPI.min.js"></script>
+    <script src="//cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/ng-file-upload-shim.min.js"></script>
+    <script src="//cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/ng-file-upload.min.js"></script>
+    <script src="appFileUpload.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        (function(){
+            var app = angular.module('app', ['appFileUpload']);
+
+            app.controller('upload', ['$scope', 'Upload', 'appFile', function($scope, Upload, appFile){
+
+                console.log('upload');
+                $scope.upload = function(){
+                    console.log('upload start');
+                    upload(angular.isArray($scope.up_file) ? $scope.up_file : [$scope.up_file])
+                };
+
+                function upload(files){
+                    angular.forEach(files, function(file){
+                        Upload.upload({
+                            url: appFile.uploadUrl,
+                            data: {
+                                file: file
+                            }
+                        }).then(function(resp){
+                            console.log('upload success');
+                            console.log(resp);
+                        }, function(){
+                            console.log('upload error');
+                        }, function(evt){
+                            file.progress = parseInt(100.0 * evt.loaded / evt.total);
+                            console.log('progress: ' + file.progress + '% ' + evt.config.data.file.name);
+                        });
+                    })
+                }
+
+            }]);
+
+            angular.bootstrap(document, ['app']);
+        })();
+    </script>
+</body>
+
+</html>
