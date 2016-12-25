@@ -24,20 +24,43 @@
             background-size: cover;
             display: inline-block;
         }
+        form{
+            padding: 10px;
+        }
     </style>
 </head>
 
 <body>
-    <div ng-controller="upload">
-        <div class="btn btn-info" ngf-select ng-model="up_file" ngf-multiple="true">
-            选择文件
+    <div class="container">
+        <div class="row">
+            <form action="" class="col-md-6 col-md-offset-3 form-horizontal">
+                <div class="form-group">
+                    <label class="col-md-3 control-label">头像</label>
+                    <div class="col-md-9">
+                        <div>
+                            <div class="btn btn-default btn-sm" ngf-select ng-model="form._pic">选择头像</div>
+                        </div>
+                        <div ngf-background="form._pic" ></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">用户名</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="btn btn-success" ng-click="upload()">Upload</div>
-        <div>
-            <div ng-repeat="file in up_file">{{ file.progress }}</div>
+        <div ng-controller="upload">
+            <div class="btn btn-info" ngf-select ng-model="up_file" ngf-multiple="true">
+                选择文件
+            </div>
+            <div class="btn btn-success" ng-click="upload()">Upload</div>
+            <div>
+                <div ng-repeat="file in up_file">{{ file.progress }}</div>
+            </div>
         </div>
     </div>
-    <img src="http://127.0.0.1:3000/file/load/8jTWyHbZTSgfrTrseFF87RLk.gif" alt="">
     <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/angular.js/1.4.4/angular.min.js"></script>
     <script src="//cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/FileAPI.min.js"></script>
@@ -48,7 +71,7 @@
         (function(){
             var app = angular.module('app', ['appFileUpload']);
 
-            app.controller('upload', ['$scope', 'Upload', 'appFile', function($scope, Upload, appFile){
+            app.controller('upload', ['$scope', 'Upload', 'appFile', function($scope, Upload, appUpload){
 
                 console.log('upload');
                 $scope.upload = function(){
@@ -59,7 +82,7 @@
                 function upload(files){
                     angular.forEach(files, function(file){
                         Upload.upload({
-                            url: appFile.uploadUrl,
+                            url: appUpload.uploadUrl,
                             data: {
                                 file: file
                             }

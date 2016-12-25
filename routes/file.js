@@ -36,18 +36,16 @@ router.post('/upload', function(req, res, next) {
             return;
         }
 
-        res.json({
-            success: true,
-            data: arguments
-        });
-
+        const resultArr = [];
         for (var i in files) {
             const file = files[i][0];
+            const file_path = file.path.substr(file.path.lastIndexOf(path.sep) + 1);
+            resultArr.push(file_path)
 
             db.query('insert into file set ?', [{
                 file_name: file.originalFilename,
                 file_size: file.size,
-                path: file.path.substr(file.path.lastIndexOf(path.sep) + 1),
+                path: file_path,
                 create_time: new Date(),
                 origin: req.headers.origin,
                 user_agent: req.headers['user-agent'],
@@ -60,6 +58,11 @@ router.post('/upload', function(req, res, next) {
                 }
             });
         }
+        // 返回文件文件数据
+        res.json({
+            success: true,
+            data: resultArr
+        });
     });
 });
 
@@ -98,7 +101,7 @@ router.get('/down/:id', function(req, res, next) {
 
 // 统计下载次数
 function upDownCount(path){
-    db.query('update file set down_count = down_count + 1 where path=?', [path]);
+    db.query('update file set down_count = down_count + 1, last_down_time=? where path=?', [new Date(), path]);
 }
 
 /***
