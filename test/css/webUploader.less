@@ -1,0 +1,62 @@
+// out: webUploader.css
+
+.webuploader-container{
+    position: relative;
+}
+
+.webuploader-element-invisible {
+    position: absolute !important;
+    clip: rect(1px 1px 1px 1px);
+    clip: rect(1px,1px,1px,1px);
+}
+
+uploader-list{
+    border: 1px solid #ddd;
+    display: block;
+    .uploader-item{
+        padding: 10px;
+        position: relative;
+        & + .uploader-item{
+            border-top: 1px solid #ddd;
+        }
+        .content{
+            position: relative;
+            z-index: 2;
+        }
+        .progress_bg{
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background-color: #eee;
+            transition: all .3s;
+        }
+        .file-name{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        &.success{
+            .file-name{
+                font-weight: bold;
+            }
+            .progress_bg{
+                background-color: #fafafa;
+            }
+        }
+        .state-success{
+            color: #8BC34A;
+        }
+        .btn{
+            line-height: 1;
+            padding: 0;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            margin-top: -3px;
+            i{
+                font-size: 18px;
+            }
+        }
+    }
+}

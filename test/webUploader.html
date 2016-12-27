@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Demo Test</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/angular-motion/0.4.4/angular-motion.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/webUploader.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="panel panel-default" ng-controller="imageCtrl">
+            <div class="panel-heading">单选图片</div>
+            <div class="panel-body">
+                <form class="form-horizontal" ng-submit="submit()">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">单选图片</label>
+                        <div class="col-md-9">
+                            <div class="btn btn-default" file-select file-select-name="uploader" ng-model="_logo">选择图片</div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="_logo">
+                        <div class="col-md-offset-3 col-md-9">
+                            <img file-thumb="_logo" class="am-fade img-thumbnail" ng-click="uploader.removeFile(_logo)"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button class="btn btn-primary" type="submit">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default" ng-controller="imageMultipleCtrl">
+            <div class="panel-heading">多选图片</div>
+            <div class="panel-body">
+                <form class="form-horizontal" ng-submit="submit()">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">多选图片</label>
+                        <div class="col-md-9">
+                            <div class="btn btn-default" file-select file-select-name="uploader" ng-model="_logos" multiple>选择图片</div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="_logos">
+                        <div class="col-md-9 col-md-offset-3">
+                            <img file-thumb="logo" ng-repeat="logo in _logos" class="am-fade img-thumbnail" ng-click="uploader.removeFile(logo)"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button class="btn btn-primary" type="submit">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default" ng-controller="fileCtrl">
+            <div class="panel-heading">单选文件</div>
+            <div class="panel-body">
+                <form class="form-horizontal" ng-submit="submit()">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">单选文件</label>
+                        <div class="col-md-9">
+                            <div class="btn btn-default" file-select file-select-name="uploader" ng-model="_files">选择文件</div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="_files">
+                        <div class="col-md-9 col-md-offset-3">
+                            <div>{{ _files.source.name }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button class="btn btn-primary" type="submit">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default" ng-controller="fileMultipleCtrl">
+            <div class="panel-heading">多选文件</div>
+            <div class="panel-body">
+                <form class="form-horizontal" ng-submit="submit()">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">多选文件</label>
+                        <div class="col-md-9">
+                            <div class="btn btn-default" file-select file-select-name="uploader" ng-model="_files" multiple>选择文件</div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="_files">
+                        <div class="col-md-9 col-md-offset-3">
+                            <uploader-list list="_files" file-select-name="uploader" style="width: 400px;"></uploader-list>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button class="btn btn-primary" type="submit">提交</button>
+                            <button class="btn btn-primary" type="button" ng-click="uploader.stop()">Stop</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.2.32/angular.js"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.2.32/angular-animate.min.js"></script>
+    <script src="//cdn.bootcss.com/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="//cdn.bootcss.com/es5-shim/4.5.9/es5-sham.min.js"></script>
+    <script src="//cdn.bootcss.com/es6-shim/0.35.2/es6-shim.min.js"></script>
+    <script src="//cdn.bootcss.com/es6-shim/0.35.1/es6-sham.min.js"></script>
+    <script src="//cdn.staticfile.org/webuploader/0.1.5/webuploader.js" charset="utf-8"></script>
+    <script src="webUploader.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        (function(){
+            var app = angular.module('app', ['webUploader', 'ngAnimate']);
+
+            app.controller('imageCtrl', function($scope){
+                $scope.submit = function(){
+                    $scope.uploader.upload();
+                };
+            });
+
+            app.controller('imageMultipleCtrl', function($scope){
+                $scope.submit = function(){
+                    $scope.uploader.upload();
+                };
+            });
+
+            app.controller('fileCtrl', function($scope){
+                $scope.submit = function(){
+                    $scope.uploader.upload();
+                };
+            });
+
+            app.controller('fileMultipleCtrl', function($scope){
+                $scope.submit = function(){
+                    $scope.uploader.upload();
+                };
+            });
+
+            angular.bootstrap(document, ['app']);
+        })();
+    </script>
+</body>
+
+</html>

@@ -40,17 +40,25 @@ router.post('/upload', function(req, res, next) {
         for (var i in files) {
             const file = files[i][0];
             const file_path = file.path.substr(file.path.lastIndexOf(path.sep) + 1);
-            resultArr.push(file_path)
-
-            db.query('insert into file set ?', [{
+            const fileData = {
                 file_name: file.originalFilename,
                 file_size: file.size,
                 path: file_path,
                 create_time: new Date(),
                 origin: req.headers.origin,
                 user_agent: req.headers['user-agent'],
-                down_count: 0
-            }], function(err, result) {
+                down_count: 0,
+                mime: file.headers['content-type']
+            };
+
+            resultArr.push({
+                path: file_path,
+                name: fileData.file_name,
+                mime: fileData.mime,
+                size: fileData.file_size
+            });
+
+            db.query('insert into file set ?', [fileData], function(err, result) {
                 if (err) {
                     console.error('[%s]保存数据库失败', file.originalFilename);
                 } else {
@@ -70,6 +78,9 @@ router.post('/upload', function(req, res, next) {
  * 文件下载
  */
 router.get('/load/:id', function(req, res, next) {
+    if (!fs.existsSync(filePath + path.sep + req.params.id)){
+        return res.send('no exists');
+    }
     res.sendFile(req.params.id, {
         root: filePath
     });
@@ -95,6 +106,20 @@ router.get('/down/:id', function(req, res, next) {
         res.sendFile(req.params.id, {
             root: filePath,
             headers: headers
+        });
+    });
+});
+
+router.get('/list', function(req, res){
+    var rows = Number(req.query.rows) || 10;
+    var page = ((Number(req.query.page) || 1) - 1) * rows;
+
+    db.query('select count(*) count from file', function(err, cr){
+        db.query('select * from file order by down_count desc, last_down_time limit ?,? ', [page, rows], function(err, result){
+            res.json({
+                total: cr[0].count,
+                rows: result
+            });
         });
     });
 });

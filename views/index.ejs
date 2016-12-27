@@ -1,66 +1,150 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>
-        <%= title %>
-    </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>附件列表</title>
+    <link href="//cdn.bootcss.com/angular-loading-bar/0.9.0/loading-bar.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/angular-motion/0.4.4/angular-motion.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
+    <style>
+        td i.material-icons{
+            font-size: 15px;
+        }
+        .pager{
+            text-align: right;
+        }
+    </style>
 </head>
-
 <body>
-
-    <form action="/file/upload" method="post" target="ifm" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <button type="submit">提交文件</button>
-    </form>
-
-    <button webuploader>webuploader</button>
-
-    <iframe name="ifm" id="ifm" width="100%"></iframe>
+    <div class="container-fluid" ng-controller="listCtrl">
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="_show_create_time"> 创建时间
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="_show_last_down_time"> 最后下载时间
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <nav>
+                <ul class="pager">
+                    <li ng-class="{disabled: pager.isFirst}"><a href ng-click="prevPage()">上一页</a></li>
+                    <li ng-class="{disabled: pager.isLast}"><a href ng-click="nextPage()">下一页</a></li>
+                    <li><span>共{{ fileList.total }}条，当前第{{ pager.page }}页，共{{ pager.pageCount }}页</span></li>
+                </ul>
+            </nav>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>文件名称</th>
+                    <th>来源</th>
+                    <th>文件大小</th>
+                    <th ng-if="_show_create_time" class="am-fade">创建时间</th>
+                    <th>下载次数</th>
+                    <th>路径</th>
+                    <th ng-if="_show_last_down_time" class="am-fade">最后下载时间</th>
+                    <th>类型</th>
+                    <th>其他</th>
+                </tr>
+            </thead>
+            <tr ng-repeat="file in fileList.rows">
+                <td>{{ $index + 1 }}</td>
+                <td>{{ file.file_name }}</td>
+                <td>{{ file.origin }}</td>
+                <td>{{ file.file_size | fileSize }}</td>
+                <td ng-if="_show_create_time" class="am-fade">{{ file.create_time | stringDate | date }}</td>
+                <td>{{ file.down_count }}</td>
+                <td>{{ file.path }}</td>
+                <td ng-if="_show_last_down_time" class="am-fade">{{ file.last_down_time | stringDate | date : 'medium' }}</td>
+                <td>{{ file.mime }}</td>
+                <td>
+                    <a data-placement="left"
+                        bs-tooltip data-title="{{ file.user_agent }}" data-trigger="hover"><i class="material-icons">language</i></a>
+                    <a ng-href="/file/load/{{ file.path }}" target="_blank"
+                        bs-tooltip data-title="预览" data-trigger="hover"><i class="material-icons">remove_red_eye</i></a>
+                    <a ng-href="/file/down/{{ file.path }}" target="_blank"
+                        bs-tooltip data-title="下载" data-trigger="hover"><i class="material-icons">file_download</i></a>
+                </td>
+            </tr>
+        </table>
+    </div>
     <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <script src="//cdn.staticfile.org/webuploader/0.1.5/webuploader.min.js" charset="utf-8"></script>
-    <script src="//cdn.bootcss.com/angular.js/1.2.32/angular.min.js"></script>
-    <script type="text/javascript">
+    <script src="//cdn.bootcss.com/angular.js/1.5.10/angular.min.js"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.5.10/i18n/angular-locale_zh-cn.js"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.5.10/angular-animate.min.js"></script>
+    <script src="//cdn.bootcss.com/angular-loading-bar/0.9.0/loading-bar.min.js"></script>
+    <script src="//cdn.bootcss.com/angular-strap/2.3.10/angular-strap.min.js"></script>
+    <script src="//cdn.bootcss.com/angular-strap/2.3.10/angular-strap.tpl.min.js"></script>
+    <script>
         (function(){
-            var app = angular.module('app', []);
+            var app = angular.module('app', ['angular-loading-bar', 'ngAnimate', 'mgcrea.ngStrap']);
 
-            app.directive('webuploader', function(){
-                return {
-                    restrict: 'A',
-                    link: function(scope, element, attrs){
-                        var uploader = WebUploader.create({
-                            auto: true,
-                            // 文件接收服务端。
-                            server: 'http://127.0.0.1:3000/file/upload',
-                            // 选择文件的按钮。可选。
-                            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
-                            pick: element,
-                            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
-                            resize: false
-                        });
-                        uploader.on( 'fileQueued', function( file ) {
-                            uploader.md5File( file )
+            app.controller('listCtrl', ['$scope', '$http', function($scope, $http){
+                $scope.pager = {
+                    page: 1,
+                    rows: 10
+                };
 
-                                // 及时显示进度
-                                .progress(function(percentage) {
-                                    console.log('Percentage:', percentage);
-                                })
+                $scope.prevPage = function(){
+                    if ($scope.pager.isFirst) return;
+                    $scope.pager.page--;
+                };
 
-                                // 完成
-                                .then(function(val) {
-                                    console.log('md5 result:', val);
-                                });
+                $scope.nextPage = function(){
+                    if ($scope.pager.isLast) return;
+                    $scope.pager.page++;
+                };
 
-                        });
-                    }
+                $scope.$watch('pager.page', load, true);
+
+                function load(){
+                    $scope.pager.isFirst = $scope.pager.page == 1;
+                    $http.get('/file/list', {params: $scope.pager}).success(function(res){
+                        $scope.fileList = res;
+                        $scope.pager.pageCount = Math.ceil(res.total / $scope.pager.rows);
+                        $scope.pager.isLast = $scope.pager.pageCount == $scope.pager.page;
+                    });
+                }
+
+            }]);
+
+            app.filter('stringDate', function(){
+                return function(s){
+                    if (!s) return '--';
+                    return new Date(s);
                 };
             });
 
-            console.log(app);
+            app.filter('fileSize', function(){
+                return function(s){
+                    s = Number(s);
+                    if (s < 1024){
+                        return s + 'B';
+                    }
+                    if (s < 1024 * 1024){
+                        return (s / 1024).toFixed(2) + 'KB';
+                    }
+                    if (s < 1024 * 1024 * 1024){
+                        return (s / 1024 / 1024).toFixed(2) + 'MB';
+                    }
+                    if (s < 1024 * 1024 * 1024 * 1024){
+                        return (s / 1024 / 1024 / 1024).toFixed(2) + 'GB';
+                    }
+                    return s;
+                };
+            });
 
             angular.bootstrap(document, ['app']);
         })();
     </script>
 </body>
-
 </html>

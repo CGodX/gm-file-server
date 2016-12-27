@@ -2,51 +2,46 @@
 <html>
 
 <head>
-    <title>
-        <%= title %>
-    </title>
+    <title>Demo Test</title>
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .webuploader-element-invisible{
-            position: absolute !important;
-            clip: rect(1px 1px 1px 1px);
-            clip: rect(1px,1px,1px,1px);
-        }
-        .img_item{
-            height: 100px;
-            width: 100px;
-            overflow: hidden;
-        }
-        [ngf-background]{
-            vertical-align: middle;
-            height: 100px;
-            width: 100px;
-            background-size: cover;
-            display: inline-block;
-        }
-        form{
-            padding: 10px;
-        }
-    </style>
+    <link href="//cdn.bootcss.com/angular-motion/0.4.4/angular-motion.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
     <div class="container">
-        <div class="row">
-            <form action="" class="col-md-6 col-md-offset-3 form-horizontal">
+        <div class="row" ng-controller="formCtrl">
+            <form class="col-md-6 col-md-offset-3 form-horizontal"
+                ng-submit="submit()">
                 <div class="form-group">
                     <label class="col-md-3 control-label">头像</label>
                     <div class="col-md-9">
                         <div>
-                            <div class="btn btn-default btn-sm" ngf-select ng-model="form._pic">选择头像</div>
+                            <div class="btn btn-default btn-sm" ngf-select ng-model="form._pic" ngf-multiple="true">选择头像</div>
                         </div>
-                        <div ngf-background="form._pic" ></div>
+                    </div>
+                </div>
+                <div class="form-group" ng-if="form._pic">
+                    <div class="col-md-offset-3 col-md-9">
+                        <div ngf-background="pic" class="am-fade" ng-repeat="pic in form._pic" ng-class="{success: pic.success, error: pic.error}">
+                            <i class="material-icons am-fade" ng-if="pic.success">done</i>
+                            <i class="material-icons am-fade" ng-if="pic.error">close</i>
+                            <i class="material-icons icon-spin" ng-if="pic.loading">data_usage</i>
+                            <span ng-if="pic.progress > 0"
+                                class="am-fade" ng-style="{height: pic.progress + '%'}"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-md-3 control-label">用户名</label>
                     <div class="col-md-9">
                         <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-3 col-md-9">
+                        <button class="btn btn-primary" type="submit">提交</button>
                     </div>
                 </div>
             </form>
@@ -62,25 +57,36 @@
         </div>
     </div>
     <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <script src="//cdn.bootcss.com/angular.js/1.4.4/angular.min.js"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.2.32/angular.min.js"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.2.32/angular-animate.min.js"></script>
+    <script src="//cdn.bootcss.com/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="//cdn.bootcss.com/es5-shim/4.5.9/es5-sham.min.js"></script>
+    <script>
+        FileAPI = {
+            flashUrl: 'http://cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/FileAPI.flash.swf',
+            flashImageUrl: 'http://cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/FileAPI.flash.image.swf',
+        };
+    </script>
     <script src="//cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/FileAPI.min.js"></script>
     <script src="//cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/ng-file-upload-shim.min.js"></script>
     <script src="//cdn.bootcss.com/danialfarid-angular-file-upload/12.2.13/ng-file-upload.min.js"></script>
     <script src="appFileUpload.js" charset="utf-8"></script>
     <script type="text/javascript">
         (function(){
-            var app = angular.module('app', ['appFileUpload']);
 
-            app.controller('upload', ['$scope', 'Upload', 'appFile', function($scope, Upload, appUpload){
+            var app = angular.module('app', ['appFileUpload', 'ngAnimate']);
 
-                console.log('upload');
+            app.controller('upload', ['$scope', 'Upload', 'appUpload', function($scope, Upload, appUpload){
+
                 $scope.upload = function(){
-                    console.log('upload start');
-                    upload(angular.isArray($scope.up_file) ? $scope.up_file : [$scope.up_file])
+                    upload($scope.up_file)
                 };
 
                 function upload(files){
+                    console.log('upload start!');
+                    files = angular.isArray(files) ? files : [files];
                     angular.forEach(files, function(file){
+                        console.log(file);
                         Upload.upload({
                             url: appUpload.uploadUrl,
                             data: {
@@ -98,6 +104,46 @@
                     })
                 }
 
+            }]);
+
+            app.controller('formCtrl', ['$scope', 'Upload', 'appUpload', function($scope, Upload, appUpload){
+                $scope.submit = function(){
+                    console.log('submit');
+                    upload($scope.form._pic);
+                };
+
+                function upload(files){
+                    console.log('upload start!');
+                    files = angular.isArray(files) ? files : [files];
+                    angular.forEach(files, function(file){
+                        if (file.success) return;
+                        Upload.upload({
+                            url: appUpload.uploadUrl,
+                            data: {
+                                file: file
+                            }
+                        }).then(function(resp){
+                            file.error = false;
+                            file.loading = false;
+                            file.success = true;
+                            file.progress = 0;
+                            console.log('upload success');
+                            console.log(resp);
+                        }, function(){
+                            file.success = false;
+                            file.loading = false;
+                            file.error = true;
+                            file.progress = 0;
+                            console.log('upload error');
+                        }, function(evt){
+                            file.success = false;
+                            file.error = false;
+                            file.loading = true;
+                            file.progress = parseInt(100.0 * evt.loaded / evt.total);
+                            console.log('progress: ' + file.progress + '% ' + evt.config.data.file.name);
+                        });
+                    })
+                }
             }]);
 
             angular.bootstrap(document, ['app']);

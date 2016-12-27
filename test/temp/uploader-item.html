@@ -1,0 +1,16 @@
+<div ng-repeat="file in files" class="uploader-item am-fade" ng-class="file._state">
+    <div class="progress_bg am-fade" ng-show="file._progress" ng-style="{width: file._progress + '%'}"></div>
+    <div class="content">
+        <div class="pull-right">
+            <span class="file-progress am-fade" ng-if="file._state == 'uploading'">{{ file._progress }}%</span>
+            <a class="btn btn-xs btn-link am-fade" ng-if="file._state !== 'uploading' && file._state !== 'success'"
+                ng-click="uploader.removeFile(file)">
+                <i class="material-icons">close</i>
+            </a>
+            <span class="state-success am-fade" ng-if="file._state == 'success'">
+                <i class="material-icons">check_circle</i>
+            </span>
+        </div>
+        <div class="file-name" title="{{ file._source.name }}">{{ file._source.name }}</div>
+    </div>
+</div>

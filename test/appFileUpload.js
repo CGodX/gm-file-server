@@ -2,7 +2,7 @@
     var appFile = angular.module('appFileUpload', ['ngFileUpload']);
 
     appFile.service('appUpload', function(){
-        var domain = 'http://192.168.4.27:3000';
+        var domain = 'http://127.0.0.1:3000';
 
         this.uploadUrl = domain + '/file/upload';
 
