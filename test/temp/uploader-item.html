@@ -1,15 +1,33 @@
-<div ng-repeat="file in files" class="uploader-item am-fade" ng-class="file._state">
-    <div class="progress_bg am-fade" ng-show="file._progress" ng-style="{width: file._progress + '%'}"></div>
+<div ng-repeat="file in queryList" class="uploader-item am-fade">
     <div class="content">
         <div class="pull-right">
-            <span class="file-progress am-fade" ng-if="file._state == 'uploading'">{{ file._progress }}%</span>
-            <a class="btn btn-xs btn-link am-fade" ng-if="file._state !== 'uploading' && file._state !== 'success'"
-                ng-click="uploader.removeFile(file)">
-                <i class="material-icons">close</i>
+            <span class="file-size">[ {{ file.file_size | fileSize }} ]</span>
+            <a class="btn btn-xs btn-link am-fade"
+                ng-click="removeQueryList(file)">
+                <!-- <i class="material-icons">close</i> -->
+                <i class="material-icons">&#xE5CD;</i>
             </a>
-            <span class="state-success am-fade" ng-if="file._state == 'success'">
-                <i class="material-icons">check_circle</i>
-            </span>
+        </div>
+        <div class="file-name" title="{{ file._source.name }}">{{ file.file_name }}</div>
+    </div>
+</div>
+<div ng-repeat="file in list" class="uploader-item am-fade" ng-class="file._state">
+    <div class="progress_bg am-fade" ng-show="file._progress" ng-style="{width: file._progress + '%'}"></div>
+    <div class="content">
+        <div class="pull-right toolbar">
+            <span class="file-progress am-fade" ng-if="file._state == 'uploading'">{{ file._progress || 0 }}%</span>
+            <span class="file-size">[ {{ file._source.size | fileSize }} ]</span>
+            <a class="btn btn-xs btn-link am-fade" title="删除"
+                ng-click="uploader.removeFile(file)">
+                <!-- <i class="material-icons">close</i> -->
+                <i class="material-icons">&#xE5CD;</i>
+            </a>
+        </div>
+        <div class="pull-left toolbar">
+            <!-- <i class="material-icons state-success am-fade" ng-if="file._state == 'success'">done</i> -->
+            <i class="material-icons state-success am-fade" ng-if="file._state == 'success'">&#xE876;</i>
+            <!-- <i class="material-icons">fiber_new</i> -->
+            <i class="material-icons state-new am-fade" ng-if="!file._state">&#xE05E;</i>
         </div>
         <div class="file-name" title="{{ file._source.name }}">{{ file._source.name }}</div>
     </div>

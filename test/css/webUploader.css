@@ -6,51 +6,63 @@
   clip: rect(1px 1px 1px 1px);
   clip: rect(1px, 1px, 1px, 1px);
 }
-uploader-list {
+.uploader-list {
   border: 1px solid #ddd;
   display: block;
+  max-height: 250px;
+  overflow: auto;
 }
-uploader-list .uploader-item {
+.uploader-list .uploader-item {
   padding: 10px;
   position: relative;
 }
-uploader-list .uploader-item + .uploader-item {
+.uploader-list .uploader-item + .uploader-item {
   border-top: 1px solid #ddd;
 }
-uploader-list .uploader-item .content {
+.uploader-list .uploader-item .content {
   position: relative;
   z-index: 2;
+  line-height: 24px;
 }
-uploader-list .uploader-item .progress_bg {
+.uploader-list .uploader-item .content .toolbar > * {
+  vertical-align: top;
+  display: inline-block;
+  padding-right: 10px;
+}
+.uploader-list .uploader-item .progress_bg {
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   background-color: #eee;
-  transition: all .3s;
+  transition: all 0.3s;
 }
-uploader-list .uploader-item .file-name {
+.uploader-list .uploader-item .file-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  padding-right: 30px;
 }
-uploader-list .uploader-item.success .file-name {
-  font-weight: bold;
+.uploader-list .uploader-item .file-size {
+  font-size: 12px;
 }
-uploader-list .uploader-item.success .progress_bg {
-  background-color: #fafafa;
+.uploader-list .uploader-item.success .progress_bg {
+  background-color: #fefefe;
 }
-uploader-list .uploader-item .state-success {
+.uploader-list .uploader-item .state-success {
   color: #8BC34A;
 }
-uploader-list .uploader-item .btn {
+.uploader-list .uploader-item .state-new {
+  color: #00BCD4;
+}
+.uploader-list .uploader-item .btn {
   line-height: 1;
   padding: 0;
   height: 24px;
   width: 24px;
   border-radius: 50%;
-  margin-top: -3px;
 }
-uploader-list .uploader-item .btn i {
+.uploader-list .uploader-item i {
   font-size: 18px;
+  margin-top: 3px;
 }

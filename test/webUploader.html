@@ -83,40 +83,55 @@
         <div class="panel panel-default" ng-controller="fileMultipleCtrl">
             <div class="panel-heading">多选文件</div>
             <div class="panel-body">
-                <form class="form-horizontal" ng-submit="submit()">
+                <form class="form-horizontal col-md-6 col-md-offset-3" ng-submit="submit(upForm.$valid)" name="upForm">
                     <div class="form-group">
                         <label class="col-md-3 control-label">多选文件</label>
                         <div class="col-md-9">
-                            <div class="btn btn-default" file-select file-select-name="uploader" ng-model="_files" multiple>选择文件</div>
+                            <button class="btn btn-default" type="button" ng-model="_files"
+                                file-select file-select-name="uploader" multiple>选择文件</button>
+                            <button class="btn btn-primary" type="button" ng-click="upload()">上传文件</button>
                         </div>
                     </div>
-                    <div class="form-group" ng-if="_files">
+                    <div class="form-group am-fade">
                         <div class="col-md-9 col-md-offset-3">
-                            <uploader-list list="_files" file-select-name="uploader" style="width: 400px;"></uploader-list>
+                            <div uploader-list list="_files" ng-model="files" validator="required" name="filelist" model-all file-select-name="uploader"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">用户名</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" ng-model="user.name" name="name" validator="required">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-md-offset-3 col-md-9">
-                            <button class="btn btn-primary" type="submit">提交</button>
-                            <button class="btn btn-primary" type="button" ng-click="uploader.stop()">Stop</button>
+                            <button class="btn btn-success">提交</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <!-- 旧版本浏览器补丁 -->
+    <!--[if lte IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/es5-shim/4.5.9/es5-shim.js"></script>
+    <script src="//cdn.bootcss.com/es5-shim/4.5.9/es5-sham.min.js"></script>
+    <script src="//cdn.bootcss.com/es6-shim/0.35.2/es6-shim.min.js"></script>
+    <script src="//cdn.bootcss.com/es6-shim/0.35.2/es6-sham.min.js"></script>
+    <script src="//cdn.bootcss.com/es6-promise/4.0.5/es6-promise.min.js"></script>
+    <![endif]-->
     <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/angular.js/1.2.32/angular.js"></script>
     <script src="//cdn.bootcss.com/angular.js/1.2.32/angular-animate.min.js"></script>
-    <script src="//cdn.bootcss.com/es5-shim/4.5.9/es5-shim.min.js"></script>
-    <script src="//cdn.bootcss.com/es5-shim/4.5.9/es5-sham.min.js"></script>
-    <script src="//cdn.bootcss.com/es6-shim/0.35.2/es6-shim.min.js"></script>
-    <script src="//cdn.bootcss.com/es6-shim/0.35.1/es6-sham.min.js"></script>
     <script src="//cdn.staticfile.org/webuploader/0.1.5/webuploader.js" charset="utf-8"></script>
+    <script src="//cdn.bootcss.com/angular-validation/1.4.2/angular-validation.min.js"></script>
+    <script src="//cdn.bootcss.com/angular-validation/1.4.2/angular-validation-rule.min.js"></script>
     <script src="webUploader.js" charset="utf-8"></script>
     <script type="text/javascript">
         (function(){
-            var app = angular.module('app', ['webUploader', 'ngAnimate']);
+            var app = angular.module('app', ['webUploader', 'ngAnimate', 'validation', 'validation.rule']);
 
             app.controller('imageCtrl', function($scope){
                 $scope.submit = function(){
@@ -137,7 +152,18 @@
             });
 
             app.controller('fileMultipleCtrl', function($scope){
-                $scope.submit = function(){
+                $scope.files = [];
+
+                setTimeout(function(){
+                    $scope.files = ['Lx3hWga4aMO9G7wZkwkpcuhZ.jpg', 'F-MFfa7g9ZBvuSwyKCYZETSG.jpg', 'll1wf_9BSKEqnlTrEleNaymg.jpg'];
+                    $scope.$apply();
+                }, 3000);
+
+                $scope.submit = function(v){
+                    console.log(v);
+                };
+
+                $scope.upload = function(){
                     $scope.uploader.upload();
                 };
             });

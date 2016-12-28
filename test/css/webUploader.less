@@ -1,6 +1,6 @@
 // out: webUploader.css
 
-.webuploader-container{
+.webuploader-container {
     position: relative;
 }
 
@@ -10,53 +10,79 @@
     clip: rect(1px,1px,1px,1px);
 }
 
-uploader-list{
+.uploader-list {
     border: 1px solid #ddd;
     display: block;
-    .uploader-item{
+    max-height: 250px;
+    overflow: auto;
+
+    .uploader-item {
         padding: 10px;
         position: relative;
-        & + .uploader-item{
+
+        & + .uploader-item {
             border-top: 1px solid #ddd;
         }
-        .content{
+
+        .content {
             position: relative;
             z-index: 2;
+            line-height: 24px;
+
+            .toolbar {
+                > * {
+                    vertical-align: top;
+                    display: inline-block;
+                    padding-right: 10px;
+                }
+            }
         }
-        .progress_bg{
+
+        .progress_bg {
             position: absolute;
             top: 0;
             left: 0;
             bottom: 0;
             background-color: #eee;
-            transition: all .3s;
+            transition: all 0.3s;
         }
-        .file-name{
+
+        .file-name {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            padding-right: 30px;
         }
-        &.success{
-            .file-name{
-                font-weight: bold;
-            }
-            .progress_bg{
-                background-color: #fafafa;
+
+        .file-size {
+            font-size: 12px;
+        }
+
+        &.success {
+            .progress_bg {
+                background-color: #fefefe;
             }
         }
-        .state-success{
+
+        .state-success {
             color: #8BC34A;
         }
-        .btn{
+
+        .state-new {
+            color: #00BCD4;
+        }
+
+        .btn {
             line-height: 1;
             padding: 0;
             height: 24px;
             width: 24px;
             border-radius: 50%;
-            margin-top: -3px;
-            i{
-                font-size: 18px;
-            }
+        }
+
+        i {
+            font-size: 18px;
+            margin-top: 3px;
         }
     }
 }

@@ -13,6 +13,7 @@ const filePath = './public/gm-file-server'.replace(new RegExp('/', 'g'), path.se
  */
 router.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
     next();
 });
 
@@ -121,6 +122,12 @@ router.get('/list', function(req, res){
                 rows: result
             });
         });
+    });
+});
+
+router.post('/find', function(req, res){
+    db.query('select * from file where path in (?)', [req.body.data], function(err, result){
+        res.json(result)
     });
 });
 
